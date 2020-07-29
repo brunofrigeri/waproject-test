@@ -28,6 +28,10 @@ export class UserService {
   public delete(id: number): Observable<void> {
     return this.apiService.delete(`/user/${id}`);
   }
+
+  public details(id: number): Observable<IUser> {
+    return this.apiService.get(`/user/${id}`);
+  }
 }
 
 const userService = new UserService(apiService);

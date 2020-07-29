@@ -5,6 +5,7 @@ export default interface IOrder {
   description: string;
   quantity: number;
   value: number;
+  userId: number;
 
   user: IUser;
 

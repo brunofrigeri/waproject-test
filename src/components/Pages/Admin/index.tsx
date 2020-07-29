@@ -1,6 +1,7 @@
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Drawer from 'components/Layout/Drawer';
 import AccountMultipleIcon from 'mdi-react/AccountMultipleIcon';
+import CheckBoxMultipleOutlineIcon from 'mdi-react/CheckBoxMultipleOutlineIcon';
 import StarIcon from 'mdi-react/StarIcon';
 import ViewDashboardIcon from 'mdi-react/ViewDashboardIcon';
 import React, { memo, useCallback, useRef, useState } from 'react';
@@ -48,7 +49,7 @@ const AdminPage = memo((props: {}) => {
       path: '/pedidos',
       display: 'Pedidos',
       // role: enRoles.admin,
-      icon: AccountMultipleIcon
+      icon: CheckBoxMultipleOutlineIcon
     },
     { path: '/exemplos', display: 'Exemplos', icon: StarIcon }
   ]);

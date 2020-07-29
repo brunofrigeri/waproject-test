@@ -5,23 +5,23 @@ import { IOption } from 'components/Shared/DropdownMenu';
 import TableCellActions from 'components/Shared/Pagination/TableCellActions';
 import Toast from 'components/Shared/Toast';
 import { logError } from 'helpers/rxjs-operators/logError';
-import IUser from 'interfaces/models/user';
 import DeleteIcon from 'mdi-react/DeleteIcon';
 import EditIcon from 'mdi-react/EditIcon';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useCallbackObservable } from 'react-use-observable';
 import { from } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
-import userService from 'services/user';
+import IOrder from 'interfaces/models/order';
+import orderService from 'services/order';
 
 interface IProps {
-  user: IUser;
-  onEdit: (user: IUser) => void;
+  order: IOrder;
+  onEdit: (order: IOrder) => void;
   onDeleteComplete: () => void;
 }
 
 const ListItem = memo((props: IProps) => {
-  const { user, onEdit, onDeleteComplete } = props;
+  const { order, onEdit, onDeleteComplete } = props;
 
   const [deleted, setDeleted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -30,18 +30,18 @@ const ListItem = memo((props: IProps) => {
   const handleDismissError = useCallback(() => setError(null), []);
 
   const handleEdit = useCallback(() => {
-    onEdit(user);
-  }, [onEdit, user]);
+    onEdit(order);
+  }, [onEdit, order]);
 
   const [handleDelete] = useCallbackObservable(() => {
-    return from(Alert.confirm(`Deseja excluir o usuário ${user.firstName}?`)).pipe(
+    return from(Alert.confirm(`Deseja excluir o pedido ${order.description}?`)).pipe(
       filter(ok => ok),
       tap(() => setLoading(true)),
-      switchMap(() => userService.delete(user.id)),
+      switchMap(() => orderService.delete(order.id)),
       logError(),
       tap(
         () => {
-          Toast.show(`${user.firstName} foi removido`);
+          Toast.show(`${order.description} foi removido`);
           setLoading(true);
           setDeleted(true);
           onDeleteComplete();
@@ -67,8 +67,9 @@ const ListItem = memo((props: IProps) => {
 
   return (
     <TableRow>
-      <TableCell>{user.fullName}</TableCell>
-      <TableCell>{user.email}</TableCell>
+      <TableCell>{order.description}</TableCell>
+      <TableCell>{order.quantity}</TableCell>
+      <TableCell>{order.value}</TableCell>
       <TableCellActions options={options} loading={loading} error={error} onDismissError={handleDismissError} />
     </TableRow>
   );

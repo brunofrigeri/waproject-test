@@ -7,7 +7,9 @@ export default interface IOrder {
   value: number;
   userId: number;
 
-  user: IUser;
+  firstName: Pick<IUser, 'firstName'>;
+  lastName: Pick<IUser, 'lastName'>;
+  roles: Pick<IUser, 'roles'>;
 
   createdDate?: Date;
   updatedDate?: Date;

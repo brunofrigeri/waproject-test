@@ -22,4 +22,5 @@ node ./init.js
 yarn start # Não utilizar o docker
 ```
 
+
 ### Para mais informações veja a pasta ./docs

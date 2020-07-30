@@ -7,6 +7,7 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
 import Toolbar from 'components/Layout/Toolbar';
 import CardLoader from 'components/Shared/CardLoader';
 import EmptyAndErrorMessages from 'components/Shared/Pagination/EmptyAndErrorMessages';
@@ -23,10 +24,24 @@ import FormDialog from '../FormDialog';
 import ListItem from './ListItem';
 import IOrder from 'interfaces/models/order';
 import orderService from 'services/order';
+import authService from 'services/auth';
+import { useObservable } from 'react-use-observable';
+import { map } from 'rxjs/operators';
+import { logError } from 'helpers/rxjs-operators/logError';
+import { enRoles } from 'interfaces/models/user';
 
 const OrderListPage = memo(() => {
   const [formOpened, setFormOpened] = useState(false);
   const [current, setCurrent] = useState<IOrder>();
+
+  const [user] = useObservable(() => {
+    return authService.getUser().pipe(
+      map(user => ({
+        isAdmin: user.roles.includes(enRoles.sysAdmin)
+      })),
+      logError()
+    );
+  }, []);
 
   const [params, mergeParams, loading, data, error, , refresh] = usePaginationObservable(
     params => orderService.list(params),
@@ -47,13 +62,16 @@ const OrderListPage = memo(() => {
   const formCallback = useCallback(() => {
     setFormOpened(false);
     refresh();
-    // current ? refresh() : mergeParams({ term: order.id });
   }, [refresh]);
 
   const formCancel = useCallback(() => setFormOpened(false), []);
   const handleRefresh = useCallback(() => refresh(), [refresh]);
 
   const { total, results } = data || ({ total: 0, results: [] } as typeof data);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <Fragment>
@@ -101,6 +119,7 @@ const OrderListPage = memo(() => {
                 <TableCellSortable paginationParams={params} disabled={loading} onChange={mergeParams} column='value'>
                   Valor
                 </TableCellSortable>
+                {user.isAdmin ? <TableCell>Nome do usuário</TableCell> : null}
                 <TableCellActions>
                   <IconButton disabled={loading} onClick={handleRefresh}>
                     <RefreshIcon />
@@ -117,7 +136,13 @@ const OrderListPage = memo(() => {
                 onTryAgain={refresh}
               />
               {results.map(order => (
-                <ListItem key={order.id} order={order} onEdit={handleEdit} onDeleteComplete={refresh} />
+                <ListItem
+                  key={order.id}
+                  order={order}
+                  isAdmin={user.isAdmin}
+                  onEdit={handleEdit}
+                  onDeleteComplete={refresh}
+                />
               ))}
             </TableBody>
           </Table>

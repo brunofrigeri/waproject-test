@@ -18,11 +18,11 @@ interface IProps {
   order: IOrder;
   onEdit: (order: IOrder) => void;
   onDeleteComplete: () => void;
+  isAdmin?: boolean;
 }
 
 const ListItem = memo((props: IProps) => {
-  const { order, onEdit, onDeleteComplete } = props;
-
+  const { order, onEdit, onDeleteComplete, isAdmin = false } = props;
   const [deleted, setDeleted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -70,6 +70,11 @@ const ListItem = memo((props: IProps) => {
       <TableCell>{order.description}</TableCell>
       <TableCell>{order.quantity}</TableCell>
       <TableCell>{order.value}</TableCell>
+      {isAdmin ? (
+        <TableCell>
+          {order.firstName} {order.lastName}
+        </TableCell>
+      ) : null}
       <TableCellActions options={options} loading={loading} error={error} onDismissError={handleDismissError} />
     </TableRow>
   );

@@ -44,13 +44,10 @@ const UserListPage = memo(() => {
     setFormOpened(true);
   }, []);
 
-  const formCallback = useCallback(
-    (user?: IUser) => {
-      setFormOpened(false);
-      current ? refresh() : mergeParams({ term: user.email });
-    },
-    [current, mergeParams, refresh]
-  );
+  const formCallback = useCallback(() => {
+    setFormOpened(false);
+    refresh();
+  }, [refresh]);
 
   const formCancel = useCallback(() => setFormOpened(false), []);
   const handleRefresh = useCallback(() => refresh(), [refresh]);

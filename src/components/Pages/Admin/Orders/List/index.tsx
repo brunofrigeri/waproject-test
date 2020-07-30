@@ -37,7 +37,7 @@ const OrderListPage = memo(() => {
   const [user] = useObservable(() => {
     return authService.getUser().pipe(
       map(user => ({
-        isAdmin: user.roles.includes(enRoles.sysAdmin)
+        isAdmin: user?.roles.includes(enRoles.sysAdmin)
       })),
       logError()
     );
@@ -59,10 +59,13 @@ const OrderListPage = memo(() => {
     setFormOpened(true);
   }, []);
 
-  const formCallback = useCallback(() => {
-    setFormOpened(false);
-    refresh();
-  }, [refresh]);
+  const formCallback = useCallback(
+    (order?: IOrder) => {
+      setFormOpened(false);
+      current ? refresh() : mergeParams({ term: order.description });
+    },
+    [refresh, current, mergeParams]
+  );
 
   const formCancel = useCallback(() => setFormOpened(false), []);
   const handleRefresh = useCallback(() => refresh(), [refresh]);
